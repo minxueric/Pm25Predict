@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+
+	<meta charset="utf-8">	
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="">	
+
+	<title>PM2.5预测</title>
+	
+    <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <link href="data:text/css;charset=utf-8," data-href="http://cdn.bootcss.com/bootstrap/css/bootstrap-theme.min.css" rel="stylesheet" id="bs-theme-stylesheet">
+    <!-- <link rel="stylesheet" type="text/css" href="../static/css/bootstrap.min.css"> -->
+    <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" type="text/css" href="../static/css/docs.min.css">    
+    <link href="../static/css/carousel.css" rel="stylesheet">
+
+    <script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
+    <script src="http://cdn.bootcss.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>	
+	  <script src="../static/js/Chart.js"></script>
+    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+
+</head>  
+  
+<body>
+
+	<!-- navigation-->
+    <div class="navbar-wrapper">
+      <div class="container">
+
+        <div class="navbar navbar-inverse navbar-static-top" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              <a class="navbar-brand" href="/">空气质量预测</a>
+            </div>
+            <div class="navbar-collapse collapse">
+              <ul class="nav navbar-nav">
+                <li class="active"><a href="#">主页</a></li>
+                <li><a href="/about">关于</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  <!-- END NAVIGATION -->
+
+	<!-- Carousel -->
+  
+    <div id="myCarousel" class="carousel slide" data-ride="carousel">
+
+      <!-- Indicators -->
+      <ol class="carousel-indicators">
+        <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+        <li data-target="#myCarousel" data-slide-to="1"></li>
+        <li data-target="#myCarousel" data-slide-to="2"></li>
+      </ol>
+
+      <!-- Carousel items -->
+      <div class="carousel-inner">
+        <div class="item active">
+          <img src="../static/img/background1.jpeg">
+          <div class="container">
+            <div class="carousel-caption">
+              <h1>今天PM2.5浓度</h1>
+                <div class="row">
+                  <div class="col-lg-14">
+                    <img class="img-circle" data-src="holder.js/200x200/bright/size:20px/text:{{day0[0]}}" alt="Generic placeholder image">
+                  </div><!-- /.col-lg-14 -->
+                  <h2> </h2>
+              </div>
+              <p><a class="btn btn-lg btn-info" href="#day0" role="button">详细信息</a></p>
+            </div>
+          </div>
+        </div>
+
+        <div class="item">
+          <img src="../static/img/background2.jpg">
+          <div class="container">
+            <div class="carousel-caption">
+              <h1>明天PM2.5浓度</h1>
+                <div class="row">
+                  <div class="col-lg-14">
+                    <img class="img-circle" data-src="holder.js/200x200/bright/text:{{day1[0]}}" alt="Generic placeholder image">
+                  </div><!-- /.col-lg-14 -->
+                  <h2> </h2>
+              </div>
+              <p><a class="btn btn-lg btn-info" href="#day1" role="button">详细信息</a></p>
+            </div>
+          </div>
+        </div>
+
+        <div class="item">
+          <img src="../static/img/background3.jpg">
+          <div class="container">
+            <div class="carousel-caption">
+              <h1>后天PM2.5浓度</h1>
+              <div class="row">
+                  <div class="col-lg-14">
+                    <img class="img-circle" data-src="holder.js/200x200/bright/text:{{day2[0]}}" alt="Generic placeholder image">
+                  </div><!-- /.col-lg-14 -->
+                  <h2> </h2>
+              </div>
+              <p><a class="btn btn-lg btn-info" href="#day2" role="button">详细信息</a></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Carousel nav -->
+      <a class="left carousel-control" href="#myCarousel" data-slide="prev"><span class="glyphicon glyphicon-chevron-left"></span></a>
+      <a class="right carousel-control" href="#myCarousel" data-slide="next"><span class="glyphicon glyphicon-chevron-right"></span></a>
+
+      <!-- Carousel align -->
+      <div style="text-align:center;">
+        更新于 {{preyear}}-{{premonth}}-{{preday}} {{prehour}}:{{preminute}}:00
+      </div>
+    </div>
+  <!-- END  Carousel-->
+
+	<!-- Detailed features -->
+    <div class="container marketing">
+      <div class="page-header">
+        <div class="text-center">
+          <h1>PM2.5预测详情及天气预报</h1>
+        </div>
+      </div>
+
+      <div name="day0">
+        <!-- <hr class="featurette-divider"> -->
+        <div class="row featurette">
+            <div class="col-md-5">
+              <h2 class="sub-header">今日观测及预报</h2>
+              <h4 class="text-left">——{{year[0]}}年{{month[0]}}月{{day[0]}}日 </h4>
+              <div class="container-fluid">
+                <div class="row">
+                  <div class="col-sm-0 col-sm-offset-0 col-md-12 col-md-offset-0 main">
+                    <div class="table-responsive">
+                      <table class="table table-striped">
+                        <thead>
+                          <tr>
+                            <th>指标</th>
+                            <th>数值</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>PM2.5</td>
+                            <td>{{day0[0]}} ug/m^3</td>
+                          </tr>
+                          <tr>
+                            <td>温度</td>
+                            <td>{{forinfo[0]['low']}}-{{forinfo[0]['high']}} <span class="wob_t" style="display:inline">°<span>C</span></span></td>
+                          </tr>
+                          <tr>
+                            <td>湿度</td>
+                            <td>{{forinfo[0]['humidity_l']}}-{{forinfo[0]['humidity_h']}} %</td>
+                          </tr>
+                          <tr>
+                            <td>气压</td>
+                            <td>{{forinfo[0]['pressure']}} kPa</td>
+                          </tr>
+                          <tr>
+                            <td>风速</td>
+                            <td>{{forinfo[0]['wind_avg_speed']}} km/h</td>
+                          </tr>
+                          <tr>
+                            <td>风向</td>
+                            <td>{{forinfo[0]['wind_avg_dir']}}</td>
+                          </tr>
+                          <tr>
+                            <td><abbr title="Dew point">露点</abbr></td>
+                            <td>{{forinfo[0]['dew']}} <span class="wob_t" style="display:inline">°<span>C</span></span></td>
+                          </tr>
+                          <tr>
+                            <td>晴雨</td>
+                            <td>{{forinfo[0]['event']}}</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+          </div>
+          <div class="col-md-7">
+            <div>
+              <canvas id="day0" height="400" width="500"> </canvas>
+              <h4 class="text-center">{{month[0]}}月{{day[0]}}日北京PM2.5浓度逐小时图</h4>
+            </div>  
+          </div>
+        </div>
+      </div>
+
+      <div name="day1"> 
+        <hr class="featurette-divider">
+        <div class="row featurette">
+          <div class="col-md-7">
+            <div>
+              <canvas id="day1" height="400" width="500"> </canvas>
+              <h4 class="text-center">{{month[1]}}月{{day[1]}}日北京PM2.5浓度逐小时图</h4>
+            </div>          
+          </div>
+          <div class="col-md-5">
+            <h2 class="sub-header">明日预报</h2>
+            <h4 class="text-left">——{{year[1]}}年{{month[1]}}月{{day[1]}}日 </h4>
+            <div class="container-fluid">
+                <div class="row">
+                  <div class="col-sm-0 col-sm-offset-0 col-md-12 col-md-offset-0 main">
+                    <div class="table-responsive">
+                      <table class="table table-striped">
+                        <thead>
+                          <tr>
+                            <th>指标</th>
+                            <th>数值</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>PM2.5</td>
+                            <td>{{day1[0]}} ug/m^3</td>
+                          </tr>
+                          <tr>
+                            <td>温度</td>
+                            <td>{{forinfo[1]['low']}}-{{forinfo[1]['high']}} <span class="wob_t" style="display:inline">°<span>C</span></span></td>
+                          </tr>
+                          <tr>
+                            <td>湿度</td>
+                            <td>{{forinfo[1]['humidity_l']}}-{{forinfo[1]['humidity_h']}} %</td>
+                          </tr>
+                          <tr>
+                            <td>气压</td>
+                            <td>{{forinfo[1]['pressure']}} kPa</td>
+                          </tr>
+                          <tr>
+                            <td>风速</td>
+                            <td>{{forinfo[1]['wind_avg_speed']}} km/h</td>
+                          </tr>
+                          <tr>
+                            <td>风向</td>
+                            <td>{{forinfo[1]['wind_avg_dir']}}</td>
+                          </tr>
+                          <tr>
+                            <td><abbr title="Dew point">露点</abbr></td>
+                            <td>{{forinfo[1]['dew']}} <span class="wob_t" style="display:inline">°<span>C</span></span></td>
+                          </tr>
+                          <tr>
+                            <td>晴雨</td>
+                            <td>{{forinfo[1]['event']}}</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+          </div>
+        </div>
+      </div>
+
+      <div name="day2">
+        <hr class="featurette-divider">
+        <div class="row featurette">
+          <div class="col-md-5">
+            <h2 class="sub-header">后天预报 </h2>
+            <h4 class="text-left">——{{year[2]}}年{{month[2]}}月{{day[2]}}日 </h4>
+            <div class="container-fluid">
+                <div class="row">
+                  <div class="col-sm-0 col-sm-offset-0 col-md-12 col-md-offset-0 main">
+                    <div class="table-responsive">
+                      <table class="table table-striped">
+                        <thead>
+                          <tr>
+                            <th>指标</th>
+                            <th>数值</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>PM2.5</td>
+                            <td>{{day2[0]}} ug/m^3</td>
+                          </tr>
+                          <tr>
+                            <td>温度</td>
+                            <td>{{forinfo[2]['low']}}-{{forinfo[2]['high']}} <span class="wob_t" style="display:inline">°<span>C</span></span></td>
+                          </tr>
+                          <tr>
+                            <td>湿度</td>
+                            <td>{{forinfo[2]['humidity_l']}}-{{forinfo[2]['humidity_h']}} %</td>
+                          </tr>
+                          <tr>
+                            <td>气压</td>
+                            <td>{{forinfo[2]['pressure']}} kPa</td>
+                          </tr>
+                          <tr>
+                            <td>风速</td>
+                            <td>{{forinfo[2]['wind_avg_speed']}} km/h</td>
+                          </tr>
+                          <tr>
+                            <td>风向</td>
+                            <td>{{forinfo[2]['wind_avg_dir']}}</td>
+                          </tr>
+                          <tr>
+                            <td><abbr title="Dew point">露点</abbr></td>
+                            <td>{{forinfo[2]['dew']}} <span class="wob_t" style="display:inline">°<span>C</span></span></td>
+                          </tr>
+                          <tr>
+                            <td>晴雨</td>
+                            <td>{{forinfo[2]['event']}}</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+          </div>
+          <div class="col-md-7">
+            <div>
+              <canvas id="day2" height="400" width="500"> </canvas>
+              <h4 class="text-center">{{month[2]}}月{{day[2]}}日北京PM2.5浓度逐小时图</h4>
+            </div>          
+          </div>
+        </div>
+      </div>
+    </div>
+  <!-- END THE FEATURETTES -->
+
+  <!-- footer -->
+    <footer class="bs-docs-footer" role="contentinfo">
+      <div id="contact" class="container">
+        <address>
+          <strong>清华大学信息科学与技术国家实验室</strong><br>
+          地址: 北京市海淀区 清华大学 FIT楼 1-112<br>
+          邮编: 100084<br>
+          邮箱: <a href="mailto:#">minxueric@gmail.com</a>
+        </address>
+        <p class="pull-right">
+          <a href="#">回到顶部</a>
+        </p>
+      </div>
+    </footer>
+  <!-- END footer -->
+  
+  <!-- line chart -->
+    <script>
+      var lineDataday0 = {
+        labels : {{labels}},
+        datasets : [
+          // {
+          //   fillColor : "rgba(200,187,205,0.5)",
+          //   strokeColor : "rgba(151,187,205,1)",
+          //   pointColor : "rgba(100,187,205,1)",
+          //   pointStrokeColor : "#fff",
+          //   data : {{values0[0:split]}}
+          // },
+          {
+            fillColor : "rgba(100,187,205,0.5)",
+            strokeColor : "rgba(151,187,205,1)",
+            pointColor : "rgba(100,187,205,1)",
+            pointStrokeColor : "#fff",
+            data : {{values0}}
+          }
+        ]     
+      }
+
+      var lineDataday1 = {
+        labels : {{labels}},
+        datasets : [
+          {
+            fillColor : "rgba(100,187,205,0.5)",
+            strokeColor : "rgba(151,187,205,1)",
+            pointColor : "rgba(100,187,205,1)",
+            pointStrokeColor : "#fff",
+            data : {{values1}}
+          }
+        ]     
+      }
+      var lineDataday2 = {
+        labels : {{labels}},
+        datasets : [
+          {
+            fillColor : "rgba(100,187,205,0.5)",
+            strokeColor : "rgba(151,187,205,1)",
+            pointColor : "rgba(100,187,205,1)",
+            pointStrokeColor : "#fff",
+            data : {{values2}}
+          }
+        ]     
+      }
+    window.onload = function(){
+      var ctx0 = document.getElementById("day0").getContext("2d");
+      window.line0 = new Chart(ctx0).Line(lineDataday0, {
+        responsive: true
+      });
+      var ctx1 = document.getElementById("day1").getContext("2d");
+      window.line1 = new Chart(ctx1).Line(lineDataday1, {
+        responsive: true
+      });
+      var ctx2 = document.getElementById("day2").getContext("2d");
+      window.line2 = new Chart(ctx2).Line(lineDataday2, {
+        responsive: true
+      });
+    }
+    </script>
+  <!-- END line chart -->
+
+	<!-- Bootstrap core JavaScript
+  ================================================= -->
+  <!-- Placed at the end of the document so the pages load faster -->
+  <script src="http://cdn.bootcss.com/jquery/1.10.2/jquery.min.js"></script>
+  <script src="../static/js/bootstrap.min.js"></script>
+  <script src="http://cdn.bootcss.com/holder/2.3.1/holder.js"></script>
+  <script src="http://cdn.bootcss.com/holder/2.3.1/holder.min.js"></script>
+  <script> Holder.add_theme("bright", { background: "white", foreground: "gray", size: 30 ,font: "Monaco"})</script>
+
+</body>
+
+</html>

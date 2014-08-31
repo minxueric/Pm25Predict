@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+
+	<meta charset="utf-8">	
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="">	
+
+	<title>PM2.5预测</title>
+	
+    <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <link href="data:text/css;charset=utf-8," data-href="http://cdn.bootcss.com/bootstrap/css/bootstrap-theme.min.css" rel="stylesheet" id="bs-theme-stylesheet">
+    <link rel="stylesheet" type="text/css" href="../static/css/bootstrap.min.css">
+    <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" type="text/css" href="../static/css/docs.min.css">    
+    <link href="../static/css/carousel.css" rel="stylesheet">
+    <!-- <link rel="stylesheet" type="text/css" href="../static/css/site.min.css"> -->
+
+    <script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
+    <script src="http://cdn.bootcss.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>	
+	  <script src="../static/js/Chart.js"></script>
+    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+
+</head>  
+  
+<body>
+
+	<!-- navigation-->
+    <div class="navbar-wrapper">
+      <div class="container">
+
+        <div class="navbar navbar-inverse navbar-static-top" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              <a class="navbar-brand" href="/">空气质量预测</a>
+            </div>
+            <div class="navbar-collapse collapse">
+              <ul class="nav navbar-nav">
+                <li><a href="/">主页</a></li>
+                <li class="active"><a href="/about">关于</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  <!-- END NAVIGATION -->
+
+	<!-- Carousel -->
+    <div id="myCarousel" class="carousel slide" data-ride="carousel">
+      <!-- Indicators -->
+      <ol class="carousel-indicators">
+        <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+        <li data-target="#myCarousel" data-slide-to="1"></li>
+        <li data-target="#myCarousel" data-slide-to="2"></li>
+      </ol>
+      <div class="carousel-inner">
+        <div class="item active">
+          <img src="../static/img/background1.jpeg">
+          <div class="container">
+            <div class="carousel-caption">
+              <h1>今天PM2.5浓度</h1>
+                <div class="row">
+                  <div class="col-lg-14">
+                    <img class="img-circle" data-src="holder.js/200x200/size:20px/bright/text:{{day0[0]}}" alt="Generic placeholder image">
+                  </div><!-- /.col-lg-14 -->
+                  <h2> </h2>
+              </div>
+              <p><a class="btn btn-lg btn-info" href="/#day0" role="button">详细信息</a></p>
+            </div>
+          </div>
+        </div>
+        <div class="item">
+          <img src="../static/img/background2.jpg">
+          <div class="container">
+            <div class="carousel-caption">
+              <h1>明天PM2.5浓度</h1>
+                <div class="row">
+                  <div class="col-lg-14">
+                    <img class="img-circle" data-src="holder.js/200x200/bright/text:{{day1[0]}}" alt="Generic placeholder image">
+                  </div><!-- /.col-lg-14 -->
+                  <h2> </h2>
+              </div>
+              <p><a class="btn btn-lg btn-info" href="/#day1" role="button">详细信息</a></p>
+            </div>
+          </div>
+        </div>
+        <div class="item">
+          <img src="../static/img/background3.jpg">
+          <div class="container">
+            <div class="carousel-caption">
+              <h1>后天PM2.5浓度</h1>
+              <div class="row">
+                  <div class="col-lg-14">
+                    <img class="img-circle" data-src="holder.js/200x200/bright/text:{{day2[0]}}" alt="Generic placeholder image">
+                  </div><!-- /.col-lg-14 -->
+                  <h2> </h2>
+              </div>
+              <p><a class="btn btn-lg btn-info" href="/#day2" role="button">详细信息</a></p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <a class="left carousel-control" href="#myCarousel" data-slide="prev"><span class="glyphicon glyphicon-chevron-left"></span></a>
+      <a class="right carousel-control" href="#myCarousel" data-slide="next"><span class="glyphicon glyphicon-chevron-right"></span></a>
+
+      <!-- Carousel align -->
+      <div style="text-align:center;">
+        更新于 {{preyear}}-{{premonth}}-{{preday}} {{prehour}}:{{preminute}}:00
+      </div>
+    </div>
+  <!-- END  Carousel-->
+
+  <!-- about -->
+  <div class="container">
+    
+    <div class="row">
+      <div class="col-md-3">
+        <div class="bc-sidebar">
+          <ul class="nav nav-list bc-sidenav">
+            <li>
+              <a href="#goal">
+                目标
+                <i class="glyphicon glyphicon-chevron-right"></i>
+              </a>
+            </li>
+            <li>
+              <a href="#method">
+                预测
+                <i class="glyphicon glyphicon-chevron-right"></i>
+              </a>
+            </li>
+            <li>
+              <a href="#data">
+                数据
+                <i class="glyphicon glyphicon-chevron-right"></i>
+              </a>
+            </li>
+            <li>
+              <a href="#cooperation">
+                合作
+                <i class="glyphicon glyphicon-chevron-right"></i>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-md-9">
+        <div id="goal" class="page-header">
+          <h1>目标</h1>
+        </div>
+        <p class="lead">
+          致力于提供北京本地准确的、实时的、详细的、未来两天内的PM2.5预报，希望我们的空气质量预报能给您的生活带来帮助。
+        </p>
+        <div id="method" class="page-header">
+          <h1>预测</h1>
+        </div>
+        <p class="lead">
+          以数据为驱动，分析气象指标和PM2.5浓度历史数据之间的关系，通过机器学习方法训练得到预测模型。我们的模型以过去一段时间的天气和PM2.5观测值以及天气预报值为输入，输出为未来2天内每小时的PM2.5变化趋势。<br>
+          随着历史数据的增加，每隔一定时间模型将自动更新。          
+        </p>
+        <div id="data" class="page-header">
+          <h1>数据源</h1>
+        </div>
+        <p class="lead">
+          本项目使用的PM2.5观测数据和天气预报数据均为实时抓取的网络数据。<br>
+          <blockquote>
+            特别感谢提供PM2.5实时数据的网站
+            <a href="http://www.pm25.in/">www.pm25.in</a>
+            以及提供天气历史记录和天气预报的网站
+            <a href="http://www.wunderground.com/">www.wunderground.com</a> 
+          </blockquote>          
+        </p>
+        <div id="cooperation" class="page-header">
+          <h1>合作</h1>
+        </div>
+        <p class="lead">
+          我们希望更深入地研究PM2.5的变化规律，如果您与我们有相同的目标，希望我们可以携手共进。<br>
+          
+          <blockquote>
+            <h4>联系方式：</h4>
+            <ul>
+              <li>
+                陈挺教授
+                <a href="mailto:tingchen@tsinghua.edu.cn">tingchen@tsinghua.edu.cn</a>
+              </li>  
+<!--               <li>
+                <a href="mailto:minxueric@gmail.com">minxueric@gmail.com</a>
+              </li>     -->
+            </ul>
+          </blockquote>
+        </p>
+      </div>
+    </div>
+  </div>
+  
+
+  <!-- footer -->
+  <footer class="bs-docs-footer" role="contentinfo">
+    <div id="contact" class="container">
+      <address>
+        <strong>清华大学信息科学与技术国家实验室</strong><br>
+        地址: 北京市海淀区 清华大学 FIT楼 1-112<br>
+        邮编: 100084<br>
+        邮箱: <a href="mailto:#">minxueric@gmail.com</a>
+      </address>
+      <p class="pull-right">
+        <a href="#">回到顶部</a>
+      </p>
+  </div>
+  </footer>
+  
+
+
+	<!-- Bootstrap core JavaScript
+  ================================================= -->
+  <!-- Placed at the end of the document so the pages load faster -->
+  <script src="http://cdn.bootcss.com/jquery/1.10.2/jquery.min.js"></script>
+  <script src="../static/js/bootstrap.min.js"></script>
+  <script src="http://cdn.bootcss.com/holder/2.3.1/holder.js"></script>
+  <script src="http://cdn.bootcss.com/holder/2.3.1/holder.min.js"></script>
+  <script> Holder.add_theme("bright", { background: "white", foreground: "gray", size: 30 ,font: "Monaco"})</script>
+
+</body>
+
+</html>
